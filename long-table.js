@@ -1,6 +1,6 @@
 function checkSeat(tables, start, groupPeoples) {
     for (let i = start; i < start + groupPeoples; i++) {
-        if (i > tables.length && tables[i-tables.length]) {
+        if (i >= tables.length && tables[i-tables.length]) {
             return false
         } else if (tables[i]) {
             return false
@@ -26,14 +26,15 @@ function sitToSeat(tables, start, groupPeoples) {
  */
 const main = () => {
     const settings = lines[0].split(' ')
-    let tables = new Array(Number(settings[0]))
+    let tables = new Array(Number(settings[0])).fill(false)
     const groups = Number(settings[1])
 
-    for(let i = 1; i < groups; i++) {
+    for(let i = 1; i <= groups; i++) {
         const group = lines[i].split(' ')
         const groupPeoples = Number(group[0])
         const start = Number(group[1]) - 1
 
+        // 席が埋まっているか確認し、大丈夫なら座る
         if (checkSeat(tables, start, groupPeoples)) {
             tables = sitToSeat(tables, start, groupPeoples)
         }

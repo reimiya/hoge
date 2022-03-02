@@ -1,32 +1,26 @@
+function invokeClairvoyance(playerTry) {
+    return playerTry.map((t) => {
+        if (t === 'G') return 5
+        if (t === 'C') return 0
+        if (t === 'P') return 2
+    })
+}
+
+function calculateMinLose(allWinTry, fingerCount) {
+    const fingerCountDiff = Math.abs(allWinTry.reduce((a, c) => a + c, 0) - fingerCount)
+    switch (fingerCountDiff % 5) {
+        case 4:
+        case 1: return Math.floor(fingerCountDiff / 5) + 2
+        case 3:
+        case 2: return Math.floor(fingerCountDiff / 5) + 1
+        case 0: return Math.floor(fingerCountDiff / 5)
+    }
+}
+
 /* --------------------------------
 N: tryCount = n_g + n_c + n_p
 M: fingerCount = (0 * n_g) + (2 * n_c) + (5 * n_p)
 -------------------------------- */
-
-const powerSet = (arr = []) => {
-    const res = []
-    const { length } = arr
-    const numberOfCombinations = 2 ** length
-    for (let combinationIndex = 0; combinationIndex < numberOfCombinations; combinationIndex += 1) {
-        const subSet = []
-        for (let setElementIndex = 0; setElementIndex < arr.length;
-             setElementIndex += 1) {
-            if (combinationIndex & (1 << setElementIndex)) {
-                subSet.push(arr[setElementIndex])
-            }
-        }
-        res.push(subSet)
-    }
-    return res;
-}
- const getCombinations = (tryCount, fingerCount) => {
-     let arr = []
-     for (let i = 0; i < tryCount; i++) {
-         arr.push(0, 2, 5)
-     }
-     return powerSet(arr).filter((a) => a.length === tryCount && a.reduce((p, c) => p+c, 0) === fingerCount)
-}
-
 /**
  *  メイン処理
  *  lines: Array<string> 入力された行(末尾は必ず改行)分の配列
@@ -35,16 +29,16 @@ const main = () => {
     const settings = lines[0].split(' ')
     let tryCount = Number(settings[0])
     const fingerCount = Number(settings[1])
+    const playerTry = Array.from(lines[1])
 
-    // 組み合わせのパターン網羅
-    // 指の数に合うパターンに絞り込み
-    const combinations = getCombinations(tryCount, fingerCount)
-    console.log(combinations)
+    // 全勝するパターンを算出
+    const allWinTry = invokeClairvoyance(playerTry)
 
-    // 順番網羅
+    // 全勝の指の数と目標とする指の数との差で最小何回手を変えるべきか算出
+    const minLose = calculateMinLose(allWinTry, fingerCount)
 
-    // 勝ち数の集計
-
+    // 最大勝ち数を出力
+    console.log(tryCount - minLose)
 
     // 空行
     console.log('')
