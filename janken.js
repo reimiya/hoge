@@ -1,26 +1,53 @@
 function invokeClairvoyance(playerTry) {
-    return playerTry.map((t) => {
-        if (t === 'G') return 5
-        if (t === 'C') return 0
-        if (t === 'P') return 2
-    })
+    return playerTry.reduce((a, c) => {
+        if (c === 'G') a.P++
+        if (c === 'C') a.G++
+        if (c === 'P') a.C++
+        return a
+    }, {G: 0, C: 0, P: 0})
+}
+
+function adjustFingerCount(allWinTry, diff, t5, t3, t2, ti2) {
+    let minLose = 0
+    while (allWinTry[t5] > 0 && diff >= 5) {
+        allWinTry[t5]--
+        minLose++
+        diff -= 5
+    }
+    while (allWinTry[t3] > 0 && diff >= 3) {
+        allWinTry[t3]--
+        minLose++
+        diff -= 3
+    }
+    while (allWinTry[t2] > 0 && diff >= 2) {
+        allWinTry[t2]--
+        minLose++
+        diff -= 2
+    }
+    while (allWinTry[t3] > 0 && allWinTry[ti2] > 0 && diff >= 1) {
+        allWinTry[t3]--
+        allWinTry[ti2]--
+        minLose += 2
+        diff -= 1
+    }
+
+    return minLose;
 }
 
 function calculateMinLose(allWinTry, fingerCount) {
-    const fingerCountDiff = Math.abs(allWinTry.reduce((a, c) => a + c, 0) - fingerCount)
-    switch (fingerCountDiff % 5) {
-        case 4:
-        case 1: return Math.floor(fingerCountDiff / 5) + 2
-        case 3:
-        case 2: return Math.floor(fingerCountDiff / 5) + 1
-        case 0: return Math.floor(fingerCountDiff / 5)
+    // 全勝の場合との指定の指の数の差(allWinTry.G*0=0のため省略)
+    const fingerCountDiff = allWinTry.C * 2 + allWinTry.P * 5 +  - fingerCount
+
+    // 正の場合は減らす調整、負の場合は増やす調整をして指定の指の数に合わせるための変更数を出す
+    if (fingerCountDiff > 0) {
+        return adjustFingerCount(allWinTry, Math.abs(fingerCountDiff), 'P', 'P', 'C', 'G')
+    } else if (fingerCountDiff < 0) {
+        return adjustFingerCount(allWinTry, Math.abs(fingerCountDiff), 'G', 'C', 'G', 'C')
+    } else {
+        return 0
     }
 }
 
-/* --------------------------------
-N: tryCount = n_g + n_c + n_p
-M: fingerCount = (0 * n_g) + (2 * n_c) + (5 * n_p)
--------------------------------- */
 /**
  *  メイン処理
  *  lines: Array<string> 入力された行(末尾は必ず改行)分の配列

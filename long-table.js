@@ -6,7 +6,7 @@ function checkSeat(tables, start, groupPeoples) {
             return false
         }
     }
-    return true;
+    return true
 }
 
 function sitToSeat(tables, start, groupPeoples) {
@@ -17,7 +17,7 @@ function sitToSeat(tables, start, groupPeoples) {
             tables[i] = true
         }
     }
-    return tables;
+    return tables
 }
 
 /**
