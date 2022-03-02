@@ -8,61 +8,63 @@ function invokeClairvoyance(playerTry) {
 }
 
 function adjustFingerCount(allWinTry, diff, t5, t3, t2, ti5, ti3, ti2) {
-    const adjustedTry = {...allWinTry}
-    const changeLog = {t5: 0, t3: 0, t2: 0, ti5: 0, ti3: 0, ti2: 0}
     let minLose = 0
-    while (adjustedTry[t5] > 0 && diff >= 5) {
-        adjustedTry[t5]--
+    const changeLog = {t5: 0, t3: 0, t2: 0, ti5: 0, ti3: 0, ti2: 0}
+
+    // diffの減少量が多くての手数が少ない順にじゃんけんの手を変更する
+    while (allWinTry[t5] > 0 && diff >= 5) {
+        allWinTry[t5]--
         changeLog.t5++
         minLose++
         diff -= 5
     }
-    while (adjustedTry[t3] > 0 && diff >= 3) {
-        adjustedTry[t3]--
+    while (allWinTry[t3] > 0 && diff >= 3) {
+        allWinTry[t3]--
         changeLog.t3++
         minLose++
         diff -= 3
     }
-    while (adjustedTry[t2] > 0 && diff >= 2) {
-        adjustedTry[t2]--
+    while (allWinTry[t2] > 0 && diff >= 2) {
+        allWinTry[t2]--
         changeLog.t2++
         minLose++
         diff -= 2
     }
 
-    while (adjustedTry[t3] > 1 && changeLog.t5 > 0 && diff >= 1) {
-        adjustedTry[t3] -= 2
-        adjustedTry[t5]++
+    while (allWinTry[t3] > 1 && changeLog.t5 > 0 && diff >= 1) {
+        allWinTry[t3] -= 2
+        allWinTry[t5]++
         changeLog.t3 += 2
         changeLog.t5--
         minLose++
         diff--
     }
-    while (adjustedTry[t2] > 1 && changeLog.t3 > 0 && diff >= 1) {
-        adjustedTry[t2] -= 2
-        adjustedTry[t3]++
+    while (allWinTry[t2] > 1 && changeLog.t3 > 0 && diff >= 1) {
+        allWinTry[t2] -= 2
+        allWinTry[t3]++
         changeLog.t2 += 2
         changeLog.t3--
         minLose++
         diff--
     }
-    while (adjustedTry[t2] > 2 && changeLog.t5 > 0 && diff >= 1) {
-        adjustedTry[t2] -= 3
-        adjustedTry[t5]++
+    while (allWinTry[t2] > 2 && changeLog.t5 > 0 && diff >= 1) {
+        allWinTry[t2] -= 3
+        allWinTry[t5]++
         changeLog.t2 += 3
         changeLog.t5--
         minLose += 2
         diff--
     }
 
-    while (adjustedTry[t3] > 0 && adjustedTry[ti2] > 0 && diff >= 1) {
-        adjustedTry[t3]--
-        adjustedTry[ti2]--
+    while (allWinTry[t3] > 0 && allWinTry[ti2] > 0 && diff >= 1) {
+        allWinTry[t3]--
+        allWinTry[ti2]--
         changeLog.t3--
         changeLog.ti2--
         minLose += 2
         diff--
     }
+
     return minLose;
 }
 
@@ -86,7 +88,7 @@ function calculateMinLose(allWinTry, fingerCount) {
  */
 const main = () => {
     const settings = lines[0].split(' ')
-    let tryCount = Number(settings[0])
+    const tryCount = Number(settings[0])
     const fingerCount = Number(settings[1])
     const playerTry = Array.from(lines[1])
 
