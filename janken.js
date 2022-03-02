@@ -7,30 +7,62 @@ function invokeClairvoyance(playerTry) {
     }, {G: 0, C: 0, P: 0})
 }
 
-function adjustFingerCount(allWinTry, diff, t5, t3, t2, ti2) {
+function adjustFingerCount(allWinTry, diff, t5, t3, t2, ti5, ti3, ti2) {
+    const adjustedTry = {...allWinTry}
+    const changeLog = {t5: 0, t3: 0, t2: 0, ti5: 0, ti3: 0, ti2: 0}
     let minLose = 0
-    while (allWinTry[t5] > 0 && diff >= 5) {
-        allWinTry[t5]--
+    while (adjustedTry[t5] > 0 && diff >= 5) {
+        adjustedTry[t5]--
+        changeLog.t5++
         minLose++
         diff -= 5
     }
-    while (allWinTry[t3] > 0 && diff >= 3) {
-        allWinTry[t3]--
+    while (adjustedTry[t3] > 0 && diff >= 3) {
+        adjustedTry[t3]--
+        changeLog.t3++
         minLose++
         diff -= 3
     }
-    while (allWinTry[t2] > 0 && diff >= 2) {
-        allWinTry[t2]--
+    while (adjustedTry[t2] > 0 && diff >= 2) {
+        adjustedTry[t2]--
+        changeLog.t2++
         minLose++
         diff -= 2
     }
-    while (allWinTry[t3] > 0 && allWinTry[ti2] > 0 && diff >= 1) {
-        allWinTry[t3]--
-        allWinTry[ti2]--
+
+    while (adjustedTry[t3] > 1 && changeLog.t5 > 0 && diff >= 1) {
+        adjustedTry[t3] -= 2
+        adjustedTry[t5]++
+        changeLog.t3 += 2
+        changeLog.t5--
+        minLose++
+        diff--
+    }
+    while (adjustedTry[t2] > 1 && changeLog.t3 > 0 && diff >= 1) {
+        adjustedTry[t2] -= 2
+        adjustedTry[t3]++
+        changeLog.t2 += 2
+        changeLog.t3--
+        minLose++
+        diff--
+    }
+    while (adjustedTry[t2] > 2 && changeLog.t5 > 0 && diff >= 1) {
+        adjustedTry[t2] -= 3
+        adjustedTry[t5]++
+        changeLog.t2 += 3
+        changeLog.t5--
         minLose += 2
-        diff -= 1
+        diff--
     }
 
+    while (adjustedTry[t3] > 0 && adjustedTry[ti2] > 0 && diff >= 1) {
+        adjustedTry[t3]--
+        adjustedTry[ti2]--
+        changeLog.t3--
+        changeLog.ti2--
+        minLose += 2
+        diff--
+    }
     return minLose;
 }
 
@@ -40,9 +72,9 @@ function calculateMinLose(allWinTry, fingerCount) {
 
     // 正の場合は減らす調整、負の場合は増やす調整をして指定の指の数に合わせるための変更数を出す
     if (fingerCountDiff > 0) {
-        return adjustFingerCount(allWinTry, Math.abs(fingerCountDiff), 'P', 'P', 'C', 'G')
+        return adjustFingerCount(allWinTry, Math.abs(fingerCountDiff), 'P', 'P', 'C', 'G', 'C', 'G')
     } else if (fingerCountDiff < 0) {
-        return adjustFingerCount(allWinTry, Math.abs(fingerCountDiff), 'G', 'C', 'G', 'C')
+        return adjustFingerCount(allWinTry, Math.abs(fingerCountDiff), 'G', 'C', 'G', 'P', 'P', 'C')
     } else {
         return 0
     }
